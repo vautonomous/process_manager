@@ -11,6 +11,7 @@
 
 // Include others
 #include <vector>
+#include <string>
 
 namespace bp = boost::process;
 namespace proc_ex = bp::extend;
@@ -21,8 +22,30 @@ public:
 
 private:
 
-    std::shared_ptr<bp::group> gprocess_autoware_;
-    std::vector<bp::child> vector_process_;
+    bp::group gprocess_autoware_;
+    std::vector<bp::child> processes_;
+
+    std::string map_path_;
+    std::string vehicle_model_;
+    std::string sensor_model_;
+
+    struct status_handler : proc_ex::handler
+    {
+        int status = 0;
+        pid_t pid;
+        template<typename Executor>
+        void on_success(Executor & exec)
+        {
+            status = 1;
+            pid = exec.pid;
+        }
+        template<typename Executor>
+        void on_exit(Executor & exec)
+        {
+            status = 0;
+            pid = exec.pid;
+        }
+    };
 
     //!< @brief ui process manager diagnostic publisher
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr pub_diagnostic_;
@@ -35,27 +58,27 @@ private:
     /**
     * @brief for shutting PC down
     */
-    void startAutoware(int &result);
+    void startAutoware();
 
     /**
     * @brief for shutting PC down
     */
-    void killAutoware(int &result);
+    void killAutoware();
 
     /**
     * @brief for shutting PC down
     */
-    void restartAutoware(int &result);
+    void restartAutoware();
 
     /**
     * @brief for shutting PC down
     */
-    void shutdownPC(int &result);
+    void shutdownPC();
 
     /**
     * @brief for rebooting PC
     */
-    void rebootPC(int &result);
+    void rebootPC();
 };
 
 #endif //UI_PROCESS_MANAGER_HPP_
