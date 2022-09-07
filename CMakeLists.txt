@@ -16,10 +16,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-gnu-anonymous-struct -Wno-nested-anon-types)
 endif ()
 
-# find dependencies
-find_package(ament_cmake_auto REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system filesystem)
-ament_auto_find_build_dependencies()
 
 # Set ROS_DISTRO macros
 set(ROS_DISTRO $ENV{ROS_DISTRO})
@@ -31,9 +27,24 @@ elseif (${ROS_DISTRO} STREQUAL "humble")
     add_compile_definitions(ROS_DISTRO_HUMBLE)
 endif ()
 
-ament_auto_add_library(ui_process_manager_node SHARED
+# find dependencies
+find_package(ament_cmake_auto REQUIRED)
+ament_auto_find_build_dependencies()
+
+find_package(Boost REQUIRED COMPONENTS system filesystem)
+
+ament_auto_add_executable(ui_process_manager_node
         src/main.cpp
         src/ui_process_manager.cpp
+        )
+
+target_include_directories(ui_process_manager_node
+        SYSTEM PUBLIC
+        ${BOOST_INCLUDE_DIRS}
+        )
+
+ament_target_dependencies(ui_process_manager_node
+        Boost
         )
 
 ament_auto_package(
