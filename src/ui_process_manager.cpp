@@ -6,7 +6,6 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
     map_path_ = declare_parameter("map_path", std::string(""));
     vehicle_model_ = declare_parameter("vehicle_model", std::string(""));
     sensor_model_ = declare_parameter("sensor_model", std::string(""));
-
     // Create publisher and subscriber objects
     pub_diagnostic_ = create_publisher<std_msgs::msg::UInt8>("out/process_result", 1);
     sub_process_command_ = create_subscription<std_msgs::msg::UInt8>("in/process_command", 1,
@@ -35,24 +34,27 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 }
 
 void UIProcessManager::startAutoware() {
-    if(!initialized_){
+    if (!initialized_) {
         //Define processes to run Autoware, run isuzu.launch.xml
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
-                                               "-c", "ros2 launch autoware_launch isuzu.launch.xml", " ",
+                                               "-c",
+                                               "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml",
+                                               " ",
                                                "map_path:=", map_path_, " ",
                                                "vehicle_model:=", vehicle_model_, " ",
                                                "sensor_model:=", sensor_model_}, gprocess_autoware_));
-       // Run pointcloud container
+        // Run pointcloud container
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
                                                "-c",
-                                               "ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container"},
+                                               "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container"},
                                        gprocess_autoware_));
-       // Run camera driver, TEMP
+        // Run camera driver, TEMP
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
                                                "-c",
+                                               "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ",
                                                "ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml"},
                                        gprocess_autoware_));
         initialized_ = true;
@@ -61,10 +63,10 @@ void UIProcessManager::startAutoware() {
 }
 
 void UIProcessManager::killAutoware() {
-    if(!processes_.empty()){
+    if (!processes_.empty()) {
         // Kill processes in the group
         gprocess_autoware_.terminate();
-        for(auto &process: processes_){
+        for (auto &process: processes_) {
             // Wait processes to exit to avoid zombie processes
             process.wait();
         }
