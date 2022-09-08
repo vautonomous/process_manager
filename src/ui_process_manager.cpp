@@ -54,8 +54,7 @@ void UIProcessManager::startAutoware() {
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
                                                "-c",
-                                               "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ",
-                                               "ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml"},
+                                               "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml"},
                                        gprocess_autoware_));
         initialized_ = true;
     }
