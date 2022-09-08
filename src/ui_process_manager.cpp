@@ -7,7 +7,6 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
     vehicle_model_ = declare_parameter("vehicle_model", std::string(""));
     sensor_model_ = declare_parameter("sensor_model", std::string(""));
 
-    std::cout << "Parameters: " << map_path_ << " " << vehicle_model_ << " " << sensor_model_ << std::endl;
     // Create publisher and subscriber objects
     pub_diagnostic_ = create_publisher<std_msgs::msg::UInt8>("out/process_result", 1);
     sub_process_command_ = create_subscription<std_msgs::msg::UInt8>("in/process_command", 1,
