@@ -1,0 +1,9 @@
+<launch>
+    <arg name="input_topic" default="/ui/ui_process_command"/>
+    <arg name="output_topic" default="/ui/ui_process_diagnostic"/>
+    <node pkg="ui_process_manager" exec="ui_process_manager_node" name="ui_process_manager" output="screen">
+        <remap from="in/process_command" to="$(var input_topic)"/>
+        <remap from="out/process_result" to="$(var output_topic)"/>
+        <param from="$(find-pkg-share ui_process_manager)/config/ui_process_manager.param.yaml"/>
+    </node>
+</launch>
