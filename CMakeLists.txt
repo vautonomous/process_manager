@@ -49,4 +49,6 @@ ament_target_dependencies(ui_process_manager_node
 
 ament_auto_package(
         INSTALL_TO_SHARE
+        launch
+        config
 )
