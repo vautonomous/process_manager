@@ -56,16 +56,6 @@ void UIProcessManager::startAutoware() {
                                                "-c",
                                                "ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml"},
                                        gprocess_autoware_));
-        //processes_.push_back(bp::child(bp::search_path("bash"),
-        //                               std::vector<std::string>{
-        //                                       "-c",
-        //                                       "ros2 launch scenario_test_runner scenario_test_runner.launch.py \\\n"
-        //                                       "  architecture_type:=awf/universe \\\n"
-        //                                       "  record:=false \\\n"
-        //                                       "  scenario:='$(find-pkg-share scenario_test_runner)/scenario/sample.yaml' \\\n"
-        //                                       "  sensor_model:=sample_sensor_kit \\\n"
-        //                                       "  vehicle_model:=sample_vehicles"},
-        //                               gprocess_autoware_));
         initialized_ = true;
     }
 
