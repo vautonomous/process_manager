@@ -12,7 +12,8 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
                                                                      std::bind(&UIProcessManager::commandCallback, this,
                                                                                std::placeholders::_1));
 
-
+    // register signal SIGINT and signal handler
+    signal(SIGCHLD, UIProcessManager::signalHandler);
 }
 
 void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
@@ -37,10 +38,10 @@ void UIProcessManager::startAutoware() {
     if (!initialized_) {
         std::string run_autoware_command =
                 "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
-                map_path_ + " vehicle_model:=" +
-                vehicle_model_ + " sensor_model:=" + sensor_model_;
+                map_path_ + " vehicle_model:=" + vehicle_model_ + " sensor_model:=" + sensor_model_;
         std::string run_container_command = "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
         std::string run_camera_command = "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml";
+
         //Define processes to run Autoware, run isuzu.launch.xml
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
@@ -59,6 +60,17 @@ void UIProcessManager::startAutoware() {
                                                run_camera_command},
                                        gprocess_autoware_));
         initialized_ = true;
+        bool running = true;
+        for (auto &process: processes_) {
+            // Check if all processes are running
+            running = running && process.running();
+        }
+        if(running){
+            UIProcessManager::publishDiagnostic(1);
+        }
+        else{
+            UIProcessManager::publishDiagnostic(0);
+        }
     }
 
 }
@@ -69,10 +81,12 @@ void UIProcessManager::killAutoware() {
         gprocess_autoware_.terminate();
         for (auto &process: processes_) {
             // Wait processes to exit to avoid zombie processes
+            std::cout << "Killing process (" << process.id() << ") " << std::endl;
             process.wait();
         }
         processes_.clear();
         initialized_ = false;
+        UIProcessManager::publishDiagnostic(0);
     }
 }
 
@@ -100,6 +114,11 @@ void UIProcessManager::rebootPC() {
     c.wait();
 }
 
+void UIProcessManager::publishDiagnostic(uint8_t status){
+    std_msgs::msg::UInt8::SharedPtr diagnostic_msg;
+    diagnostic_msg->data = static_cast<uint8_t>(status);
+    pub_diagnostic_->publish(*diagnostic_msg);
+}
 
 
 

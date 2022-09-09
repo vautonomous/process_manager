@@ -12,6 +12,8 @@
 // Include others
 #include <vector>
 #include <string>
+#include <csignal>
+#include <iostream>
 
 namespace bp = boost::process;
 namespace proc_ex = bp::extend;
@@ -19,8 +21,17 @@ namespace proc_ex = bp::extend;
 class UIProcessManager : public rclcpp::Node {
 public:
     UIProcessManager(const std::string &node_name, const rclcpp::NodeOptions &options);
+    void uiSignalHandler (int signum)
+    {
+        std::cout << "Interrupt signal (" << signum << ") received. Publishing error code" << std::endl;
+        killAutoware();
 
+    }
+    static void signalHandler(int signum){
+        process_manager_.uiSignalHandler(signum);
+    }
 private:
+    static UIProcessManager process_manager_;
 
     bp::group gprocess_autoware_;
     std::vector<bp::child> processes_;
@@ -63,6 +74,10 @@ private:
     * @brief for rebooting PC
     */
     void rebootPC();
+    /**
+    * @brief for publishing process diagnostic
+    */
+    void publishDiagnostic(uint8_t status);
 };
 
 #endif //UI_PROCESS_MANAGER_HPP_
