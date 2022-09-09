@@ -11,9 +11,6 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
     sub_process_command_ = create_subscription<std_msgs::msg::UInt8>("in/process_command", 1,
                                                                      std::bind(&UIProcessManager::commandCallback, this,
                                                                                std::placeholders::_1));
-
-    // register signal SIGINT and signal handler
-    signal(SIGCHLD, UIProcessManager::signalHandler);
 }
 
 void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
@@ -65,10 +62,9 @@ void UIProcessManager::startAutoware() {
             // Check if all processes are running
             running = running && process.running();
         }
-        if(running){
+        if (running) {
             UIProcessManager::publishDiagnostic(1);
-        }
-        else{
+        } else {
             UIProcessManager::publishDiagnostic(0);
         }
     }
@@ -114,10 +110,10 @@ void UIProcessManager::rebootPC() {
     c.wait();
 }
 
-void UIProcessManager::publishDiagnostic(uint8_t status){
-    std_msgs::msg::UInt8::SharedPtr diagnostic_msg;
-    diagnostic_msg->data = static_cast<uint8_t>(status);
-    pub_diagnostic_->publish(*diagnostic_msg);
+void UIProcessManager::publishDiagnostic(uint8_t status) {
+    std_msgs::msg::UInt8 diagnostic_msg;
+    diagnostic_msg.data = static_cast<uint8_t>(status);
+    pub_diagnostic_->publish(diagnostic_msg);
 }
 
 

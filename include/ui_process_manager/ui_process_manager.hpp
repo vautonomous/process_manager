@@ -8,6 +8,7 @@
 // Include Boost dependencies
 #include <boost/process.hpp>
 #include <boost/process/extend.hpp>
+#include <boost/asio/io_context.hpp>
 
 // Include others
 #include <vector>
@@ -21,18 +22,7 @@ namespace proc_ex = bp::extend;
 class UIProcessManager : public rclcpp::Node {
 public:
     UIProcessManager(const std::string &node_name, const rclcpp::NodeOptions &options);
-    void uiSignalHandler (int signum)
-    {
-        std::cout << "Interrupt signal (" << signum << ") received. Publishing error code" << std::endl;
-        killAutoware();
-
-    }
-    static void signalHandler(int signum){
-        process_manager_.uiSignalHandler(signum);
-    }
 private:
-    static UIProcessManager process_manager_;
-
     bp::group gprocess_autoware_;
     std::vector<bp::child> processes_;
 
