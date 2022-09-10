@@ -34,9 +34,9 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 void UIProcessManager::startAutoware() {
     if (!initialized_) {
         std::string run_autoware_command =
-                "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
+                "source /home/volt/projects/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
                 map_path_ + " vehicle_model:=" + vehicle_model_ + " sensor_model:=" + sensor_model_;
-        std::string run_container_command = "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
+        std::string run_container_command = "source /home/volt/projects/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
         std::string run_camera_command = "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml";
 
         // Give required permissions and start monitors
