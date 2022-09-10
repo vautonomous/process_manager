@@ -1,4 +1,4 @@
-#include "ui_process_manager/ui_process_manager.hpp"
+ #include "ui_process_manager/ui_process_manager.hpp"
 
 UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::NodeOptions &options) : Node(node_name,
                                                                                                             options) {
@@ -38,6 +38,11 @@ void UIProcessManager::startAutoware() {
                 map_path_ + " vehicle_model:=" + vehicle_model_ + " sensor_model:=" + sensor_model_;
         std::string run_container_command = "source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
         std::string run_camera_command = "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml";
+
+        // Give required permissions and start monitors
+        bp::system(bp::search_path("bash"),std::vector<std::string>{
+                "-c",
+                "echo asd | sudo -S /home/volt/projects/volt_scripts/system_monitor/system_monitor.sh"});
 
         //Define processes to run Autoware, run isuzu.launch.xml
         processes_.push_back(bp::child(bp::search_path("bash"),
@@ -83,6 +88,9 @@ void UIProcessManager::killAutoware() {
         processes_.clear();
         initialized_ = false;
         UIProcessManager::publishDiagnostic(0);
+        bp::system(bp::search_path("bash"),std::vector<std::string>{
+                "-c",
+                "echo asd | sudo -S /home/volt/projects/volt_scripts/system_monitor/kill_process.sh"});
     }
 }
 
