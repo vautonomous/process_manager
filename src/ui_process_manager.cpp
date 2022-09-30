@@ -51,25 +51,29 @@ void UIProcessManager::startAutoware() {
                                            "-c",
                                            run_container_command},
                                        gprocess_autoware_));
-        
-        //Define processes to run Autoware, run isuzu.launch.xml
-        processes_.push_back(bp::child(bp::search_path("bash"),
-                                       std::vector<std::string>{
-                                               "-c",
-                                               run_autoware_command}, gprocess_autoware_));
 
-        // Run camera driver, TEMP
-        processes_.push_back(bp::child(bp::search_path("bash"),
-                                       std::vector<std::string>{
-                                               "-c",
-                                               run_camera_command},
-                                       gprocess_autoware_));
         // Run vcu driver
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
                                            "-c",
                                            run_leo_vcu_command},
                                        gprocess_autoware_));
+
+        // Run camera driver, TEMP
+        processes_.push_back(bp::child(bp::search_path("bash"),
+                                       std::vector<std::string>{
+                                           "-c",
+                                           run_camera_command},
+                                       gprocess_autoware_));
+
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        //Define processes to run Autoware, run isuzu.launch.xml
+        processes_.push_back(bp::child(bp::search_path("bash"),
+                                       std::vector<std::string>{
+                                               "-c",
+                                               run_autoware_command}, gprocess_autoware_));
+
         initialized_ = true;
         bool running = true;
         for (auto &process: processes_) {
