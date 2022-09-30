@@ -13,7 +13,7 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
                                                                                std::placeholders::_1));
 
     // Start Autoware when this node is being launched
-    UIProcessManager::startAutoware();
+    startAutoware();
 }
 
 void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
