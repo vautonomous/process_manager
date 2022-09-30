@@ -34,10 +34,11 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 void UIProcessManager::startAutoware() {
     if (!initialized_) {
         std::string run_autoware_command =
-                "source /home/volt/projects/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
+                "source /home/volt/projects /projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
                 map_path_ + " vehicle_model:=" + vehicle_model_ + " sensor_model:=" + sensor_model_;
         std::string run_container_command = "source /home/volt/projects/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
         std::string run_camera_command = "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml";
+        std::string run_leo_vcu_command = "source /home/volt/projects /projects/autoware/install/setup.bash && ros2 launch leo_vcu_driver leo_vcu_driver.launch.xml";
 
         // Give required permissions and start monitors
         bp::system(bp::search_path("bash"),std::vector<std::string>{
@@ -60,6 +61,12 @@ void UIProcessManager::startAutoware() {
                                        std::vector<std::string>{
                                                "-c",
                                                run_camera_command},
+                                       gprocess_autoware_));
+        // Run vcu driver
+        processes_.push_back(bp::child(bp::search_path("bash"),
+                                       std::vector<std::string>{
+                                           "-c",
+                                           run_leo_vcu_command},
                                        gprocess_autoware_));
         initialized_ = true;
         bool running = true;
@@ -106,7 +113,7 @@ void UIProcessManager::shutdownPC() {
     bp::child c(
             bp::search_path("bash"),
             std::vector<std::string>{
-                    "-c", "shutdown"});
+                    "-c", "shutdown now"});
     c.wait();
 }
 
