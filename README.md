@@ -1,6 +1,12 @@
 # process_manager
 This package manage system processes with ROS messages
 
+Run with 
+
+```
+    ros2 launch ui_process_manager ui_process_manager.launch.xml 
+```
+
 ## Commands
 
 | Commands |     Process      |
