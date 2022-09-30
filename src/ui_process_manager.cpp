@@ -11,6 +11,9 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
     sub_process_command_ = create_subscription<std_msgs::msg::UInt8>("in/process_command", 1,
                                                                      std::bind(&UIProcessManager::commandCallback, this,
                                                                                std::placeholders::_1));
+
+    // Start Autoware when this node is being launched
+    UIProcessManager::startAutoware();
 }
 
 void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
