@@ -45,17 +45,19 @@ void UIProcessManager::startAutoware() {
                 "-c",
                 "echo asd | sudo -S /home/volt/projects/volt_scripts/system_monitor/system_monitor.sh"});
 
+        // Run pointcloud container
+        processes_.push_back(bp::child(bp::search_path("bash"),
+                                       std::vector<std::string>{
+                                           "-c",
+                                           run_container_command},
+                                       gprocess_autoware_));
+        
         //Define processes to run Autoware, run isuzu.launch.xml
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
                                                "-c",
                                                run_autoware_command}, gprocess_autoware_));
-        // Run pointcloud container
-        processes_.push_back(bp::child(bp::search_path("bash"),
-                                       std::vector<std::string>{
-                                               "-c",
-                                               run_container_command},
-                                       gprocess_autoware_));
+
         // Run camera driver, TEMP
         processes_.push_back(bp::child(bp::search_path("bash"),
                                        std::vector<std::string>{
