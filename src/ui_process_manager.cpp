@@ -38,9 +38,9 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 
 void UIProcessManager::startAutoware() {
     if (!initialized_) {
-        std::string run_autoware_command = "/home/volt/projects/volt_scripts/test/autoware.sh";
-        std::string run_container_command = "/home/volt/projects/volt_scripts/test/perception/pointcloud_container.sh";
-        std::string run_leo_vcu_command = "/home/volt/projects/volt_scripts/test/vcu.sh";
+        std::string run_autoware_command = "source ~/projects/volt_drivers_ws/install/setup.bash && source ~/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=/home/volt/projects/gebze_map vehicle_model:=isuzu_vehicle sensor_model:=isuzu_sensor";
+        std::string run_container_command = "source /opt/ros/galactic/setup.bash && source /home/volt/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
+        std::string run_leo_vcu_command = "source /opt/ros/galactic/setup.bash && source ~/projects/autoware/install/setup.bash && ros2 launch leo_vcu_driver leo_vcu_driver.launch.xml";
 
         // Give required permissions and start monitors
         bp::system(bp::search_path("bash"),std::vector<std::string>{
@@ -90,6 +90,7 @@ void UIProcessManager::killAutoware() {
 
   // Kill processes in the group
   gprocess_autoware_.terminate();
+
   for (auto & process : processes_) {
     // Wait processes to exit to avoid zombie processes
     std::cout << "Killing process (" << process.id() << ") " << std::endl;
