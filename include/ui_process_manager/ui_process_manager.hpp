@@ -22,6 +22,8 @@ namespace proc_ex = bp::extend;
 class UIProcessManager : public rclcpp::Node {
 public:
     UIProcessManager(const std::string &node_name, const rclcpp::NodeOptions &options);
+
+    void killAutoware();
 private:
     bp::group gprocess_autoware_;
     std::vector<bp::child> processes_;
@@ -32,41 +34,20 @@ private:
     std::string vehicle_model_;
     std::string sensor_model_;
 
-    //!< @brief ui process manager diagnostic publisher
     rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr pub_diagnostic_;
-    //!< @brief ui process manager coomand subscriber
+
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr sub_process_command_;
-    /**
-    * @brief callback function for commands
-    */
+
     void commandCallback(std_msgs::msg::UInt8::SharedPtr msg);
-    /**
-    * @brief for shutting PC down
-    */
+
     void startAutoware();
 
-    /**
-    * @brief for shutting PC down
-    */
-    void killAutoware();
-
-    /**
-    * @brief for shutting PC down
-    */
     void restartAutoware();
 
-    /**
-    * @brief for shutting PC down
-    */
     void shutdownPC();
 
-    /**
-    * @brief for rebooting PC
-    */
     void rebootPC();
-    /**
-    * @brief for publishing process diagnostic
-    */
+
     void publishDiagnostic(uint8_t status);
 };
 
