@@ -11,7 +11,9 @@ UIProcessManager::UIProcessManager(const std::string &node_name, const rclcpp::N
     sub_process_command_ = create_subscription<std_msgs::msg::UInt8>("in/process_command", 1,
                                                                      std::bind(&UIProcessManager::commandCallback, this,
                                                                                std::placeholders::_1));
-
+    std::cout << "map_path_: " << map_path_ << std::endl;
+    std::cout << "vehicle_model_: " << vehicle_model_ << std::endl;
+    std::cout << "sensor_model_: " << sensor_model_ << std::endl;
     // Start Autoware when this node is being launched
     startAutoware();
 }
@@ -37,11 +39,11 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 void UIProcessManager::startAutoware() {
     if (!initialized_) {
         std::string run_autoware_command =
-                "source /home/volt/projects /projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
+                "source /home/volt/projects/autoware/install/setup.bash && ros2 launch autoware_launch isuzu.launch.xml map_path:=" +
                 map_path_ + " vehicle_model:=" + vehicle_model_ + " sensor_model:=" + sensor_model_;
-        std::string run_container_command = "source /home/volt/projects/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
+        std::string run_container_command = "source /home/volt/projects/autoware/install/setup.bash && ros2 launch autoware_launch pointcloud_container.launch.py use_multithread:=true container_name:=pointcloud_container";
         std::string run_camera_command = "source /home/volt/projects/volt_drivers_ws/install/setup.bash && ros2 run arena_camera arena_camera_node_exe --ros-args --params-file /home/volt/projects/volt_drivers_ws/src/arena_camera/param/volt_multi_camera.param.yaml";
-        std::string run_leo_vcu_command = "source /home/volt/projects /projects/autoware/install/setup.bash && ros2 launch leo_vcu_driver leo_vcu_driver.launch.xml";
+        std::string run_leo_vcu_command = "source /home/volt/projects/autoware/install/setup.bash && ros2 launch leo_vcu_driver leo_vcu_driver.launch.xml";
 
         // Give required permissions and start monitors
         bp::system(bp::search_path("bash"),std::vector<std::string>{
