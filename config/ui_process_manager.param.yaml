@@ -1,5 +1,5 @@
 /**:
   ros__parameters:
-    map_path: "/home/volt/projects/gebze_map"
+    map_path: "/opt/autoware/maps"
     vehicle_model: "isuzu_vehicle"
     sensor_model: "isuzu_sensor"
