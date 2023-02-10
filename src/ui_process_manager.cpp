@@ -38,12 +38,11 @@ void UIProcessManager::commandCallback(std_msgs::msg::UInt8::SharedPtr msg) {
 
 void UIProcessManager::startAutoware() {
     if (!initialized_) {
-        std::string run_autoware_command = "source ~/projects/autoware/install/setup.bash "
-                                           "&& source ~/projects/volt_drivers_ws/install/setup.bash "
+        std::string run_autoware_command = "source ~/projects/volt_drivers_ws/install/setup.bash "
+                                           "&& source ~/projects/autoware/install/setup.bash "
                                            "&& ros2 launch autoware_launch isuzu.launch.xml "
-                                           "map_path:=/home/volt/projects/gebze_map "
-                                           "vehicle_model:=isuzu_vehicle "
-                                           "sensor_model:=isuzu_sensor";
+                                           "map_path:=/opt/autoware/maps "
+                                           "vehicle_model:=isuzu_vehicle sensor_model:=isuzu_sensor";
 
         std::string run_container_command = "source /opt/ros/humble/setup.bash "
                                             "&& source /home/volt/projects/autoware/install/setup.bash "
