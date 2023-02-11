@@ -68,9 +68,9 @@ void UIProcessManager::startAutoware()
         "echo asd | sudo -S /home/volt/projects/volt_scripts/system_monitor/system_monitor.sh"});
 
     // Run pointcloud container
-    processes_.push_back(bp::child(
-      bp::search_path("bash"), std::vector<std::string>{"-c", run_container_command},
-      gprocess_autoware_));
+//    processes_.push_back(bp::child(
+//      bp::search_path("bash"), std::vector<std::string>{"-c", run_container_command},
+//      gprocess_autoware_));
 
     // Run vcu driver
     processes_.push_back(bp::child(
