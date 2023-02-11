@@ -46,7 +46,8 @@ void UIProcessManager::startAutoware()
       "&& ros2 launch autoware_launch isuzu.launch.xml "
       "map_path:=/opt/autoware/maps "
       "vehicle_model:=isuzu_vehicle "
-      "sensor_model:=isuzu_sensor";
+      "sensor_model:=isuzu_sensor "
+      "is_primary:=true";
 
     std::string run_container_command =
       "source /opt/ros/humble/setup.bash "
