@@ -1,10 +1,10 @@
-#include "ui_process_manager/ui_process_manager.hpp"
+#include "ui_process_manager/ui_process_manager_prime.hpp"
 
 #include <csignal>
 #include <iostream>
 #include <functional>
 
-const std::string name_node = "ui_process_manager";
+const std::string name_node = "ui_process_manager_prime";
 
 std::function<void()> callback_kill_cleanup;
 
@@ -39,7 +39,6 @@ int main(int argc, char ** argv)
     SIGSTOP,
     SIGTSTP,
     SIGCONT,
-    SIGCHLD,
     SIGTTIN,
     SIGTTOU,
     SIGPOLL,
@@ -55,7 +54,7 @@ int main(int argc, char ** argv)
 
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions node_options;
-  auto node = std::make_shared<UIProcessManager>(name_node + "_node", node_options);
+  auto node = std::make_shared<UIProcessManagerPrime>(node_options);
 
   callback_kill_cleanup = [&node](){
     node->killAutoware();

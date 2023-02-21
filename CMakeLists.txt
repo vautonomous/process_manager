@@ -33,17 +33,31 @@ ament_auto_find_build_dependencies()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
-ament_auto_add_executable(ui_process_manager_node
-        src/main.cpp
-        src/ui_process_manager.cpp
+ament_auto_add_executable(ui_process_manager_prime_node
+        src/main_prime.cpp
+        src/ui_process_manager_prime.cpp
         )
 
-target_include_directories(ui_process_manager_node
+target_include_directories(ui_process_manager_prime_node
         SYSTEM PUBLIC
         ${BOOST_INCLUDE_DIRS}
         )
 
-ament_target_dependencies(ui_process_manager_node
+ament_target_dependencies(ui_process_manager_prime_node
+        Boost
+        )
+
+ament_auto_add_executable(ui_process_manager_second_node
+        src/main_second.cpp
+        src/ui_process_manager_second.cpp
+        )
+
+target_include_directories(ui_process_manager_second_node
+        SYSTEM PUBLIC
+        ${BOOST_INCLUDE_DIRS}
+        )
+
+ament_target_dependencies(ui_process_manager_second_node
         Boost
         )
 

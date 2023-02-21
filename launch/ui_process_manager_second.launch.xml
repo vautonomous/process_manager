@@ -1,0 +1,11 @@
+<launch>
+    <group>
+        <push-ros-namespace namespace="ui"/>
+        <node pkg="ui_process_manager" exec="ui_process_manager_second_node" output="screen">
+            <remap from="in/process_command" to="~/ui_process_command"/>
+            <remap from="out/process_result" to="~/ui_process_diagnostic"/>
+            <param from="$(find-pkg-share ui_process_manager)/config/ui_process_manager.param.yaml"/>
+        </node>
+    </group>
+
+</launch>
