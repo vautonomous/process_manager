@@ -19,6 +19,10 @@ UIProcessManagerPrime::UIProcessManagerPrime(const rclcpp::NodeOptions &options)
             &UIProcessManagerPrime::nucDiagnosticCallback,
             this, std::placeholders::_1));
 
+    // Create service clients
+    client_emergency_stop_ = create_client<tier4_external_api_msgs::srv::SetEmergency>(
+            "/api/autoware/set/emergency", rmw_qos_profile_services_default);
+
     std::cout << "map_path_: " << map_path_ << std::endl;
     std::cout << "vehicle_model_: " << vehicle_model_ << std::endl;
     std::cout << "sensor_model_: " << sensor_model_ << std::endl;
@@ -39,7 +43,9 @@ void UIProcessManagerPrime::commandCallback(std_msgs::msg::UInt8::SharedPtr msg)
         restartAutoware();
     } else if (msg->data == 4) {
         killAutoware();
-    } else {
+    } else if (msg->data == 5) {
+        clearEmergency();
+    }else {
         RCLCPP_WARN_ONCE(get_logger(), "Invalid command received!");
     }
 }
@@ -186,6 +192,23 @@ void UIProcessManagerPrime::nucDiagnosticCallback(std_msgs::msg::UInt8::SharedPt
 UIProcessManagerPrime::~UIProcessManagerPrime() {
     killAutoware();
     rclcpp::shutdown();
+}
+
+void UIProcessManagerPrime::clearEmergency() {
+    using tier4_external_api_msgs::msg::ResponseStatus;
+    using tier4_external_api_msgs::srv::SetEmergency;
+
+    auto request = std::make_shared<SetEmergency::Request>();
+    request->emergency = false;
+    client_emergency_stop_->async_send_request(
+            request, [this](rclcpp::Client<SetEmergency>::SharedFuture result) {
+                const auto & response = result.get();
+                if (response->status.code == ResponseStatus::SUCCESS) {
+                    RCLCPP_INFO(get_logger(), "service succeeded");
+                } else {
+                    RCLCPP_WARN(get_logger(), "service failed: %s", response->status.message.c_str());
+                }
+            });
 }
 
 #include <rclcpp_components/register_node_macro.hpp>

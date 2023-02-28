@@ -4,6 +4,7 @@
 // Include ROS dependencies
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/u_int8.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 // Include Boost dependencies
 #include <boost/process.hpp>
@@ -16,6 +17,10 @@
 #include <csignal>
 #include <iostream>
 #include <mutex>
+
+// Include Autoware dependencies
+
+#include <tier4_external_api_msgs/srv/set_emergency.hpp>
 
 namespace bp = boost::process;
 namespace proc_ex = bp::extend;
@@ -59,6 +64,8 @@ private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr sub_process_command_;
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr sub_nuc_diagnostic_;
 
+    rclcpp::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr client_emergency_stop_;
+
     void commandCallback(std_msgs::msg::UInt8::SharedPtr msg);
 
     void nucDiagnosticCallback(std_msgs::msg::UInt8::SharedPtr msg);
@@ -74,6 +81,8 @@ private:
     void publishDiagnostic(uint8_t status);
 
     void sendCommandToNUC(uint8_t command_id);
+
+    void clearEmergency();
 };
 
 #endif //UI_PROCESS_MANAGER_PRIME_HPP_
