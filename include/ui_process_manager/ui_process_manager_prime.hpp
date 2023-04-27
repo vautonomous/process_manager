@@ -51,6 +51,8 @@ private:
     bool initialized_ = false;
     bool is_nuc_running_ = false;
     bool is_nuc_up_ = false;
+    bool current_external_emergency_{false};
+    bool current_emergency_state{false};
 
     std::string map_path_;
     std::string vehicle_model_;
@@ -65,6 +67,8 @@ private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr sub_nuc_diagnostic_;
 
     rclcpp::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr client_emergency_stop_;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_clear_emergency_;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_clear_external_emergency_;
 
     void commandCallback(std_msgs::msg::UInt8::SharedPtr msg);
 
