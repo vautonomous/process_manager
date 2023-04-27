@@ -24,6 +24,9 @@ UIProcessManagerPrime::UIProcessManagerPrime(const rclcpp::NodeOptions &options)
             "/api/autoware/set/emergency", rmw_qos_profile_services_default);
     client_clear_emergency_ = create_client<std_srvs::srv::Trigger>(
             "/system/clear_emergency", rmw_qos_profile_services_default);
+    client_clear_external_emergency_ = create_client<std_srvs::srv::Trigger>(
+            "/control/vehicle_cmd_gate/clear_external_emergency_stop", rmw_qos_profile_services_default);
+
     std::cout << "map_path_: " << map_path_ << std::endl;
     std::cout << "vehicle_model_: " << vehicle_model_ << std::endl;
     std::cout << "sensor_model_: " << sensor_model_ << std::endl;
@@ -213,6 +216,17 @@ void UIProcessManagerPrime::clearEmergency() {
 
     auto request_clear_system_emergency = std::make_shared<std_srvs::srv::Trigger::Request>();
     client_clear_emergency_->async_send_request(request_clear_system_emergency, [this](rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture result){
+        const auto & response = result.get();
+        if (response->success) {
+            RCLCPP_INFO(get_logger(), "service succeeded");
+        } else {
+            RCLCPP_WARN(
+                    get_logger(), "service failed: %s", response->message.c_str());
+        }
+    });
+
+    auto request_clear_external_emergency = std::make_shared<std_srvs::srv::Trigger::Request>();
+    client_clear_external_emergency_->async_send_request(request_clear_external_emergency, [this](rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture result){
         const auto & response = result.get();
         if (response->success) {
             RCLCPP_INFO(get_logger(), "service succeeded");

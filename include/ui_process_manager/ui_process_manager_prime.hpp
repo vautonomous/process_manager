@@ -68,6 +68,7 @@ private:
 
     rclcpp::Client<tier4_external_api_msgs::srv::SetEmergency>::SharedPtr client_emergency_stop_;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_clear_emergency_;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_clear_external_emergency_;
 
     void commandCallback(std_msgs::msg::UInt8::SharedPtr msg);
 
